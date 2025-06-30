@@ -164,7 +164,7 @@ function App() {
       // Reset the button text after 5 seconds
       setTimeout(() => {
         setIsCopied(false)
-      }, 5000)
+      }, 3000)
     } catch (err) {
       console.error('Failed to copy text: ', err)
     }
@@ -203,64 +203,98 @@ This text contains different types of problematic characters that LLMs commonly 
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-8 font-sans">
-      <h1 className="text-center mb-8 text-gray-800 text-3xl font-semibold">
-        LLM Character Highlighter
-      </h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-4 md:py-8">
+      <div className="max-w-6xl mx-auto p-4 md:p-8">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 md:p-8 text-center">
+            <h1 className="text-white text-2xl md:text-4xl font-bold tracking-wide drop-shadow-lg">
+              LLM TextFix
+            </h1>
+            <p className="text-blue-100 mt-2 text-base md:text-lg">
+              Sanitize LLM output by detecting and replacing 25+ problematic
+              characters
+            </p>
+          </div>
 
-      <div className="flex justify-between items-center mb-6 p-4 bg-slate-50 border border-slate-200 rounded-lg">
-        <div className="flex gap-4">
-          <span className="text-sm text-slate-600 font-medium">
-            Characters: {text.length.toLocaleString()}
-          </span>
-          <span className="text-sm text-red-600 font-semibold">
-            Problematic: {problematicCharCount}
-          </span>
+          {/* Main Content */}
+          <div className="p-4 md:p-8">
+            {/* Controls Section */}
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-6 p-6 bg-gradient-to-r from-slate-50 to-gray-50 border border-slate-200 rounded-xl shadow-lg gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                <div className="bg-white px-4 py-2 rounded-lg shadow-md border flex-1 text-center">
+                  <span className="text-sm text-slate-600 font-medium">
+                    Characters:
+                  </span>
+                  <span className="text-sm text-slate-800 font-bold ml-2">
+                    {text.length.toLocaleString()}
+                  </span>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg shadow-md border flex-1 text-center">
+                  <span className="text-sm text-slate-600 font-medium">
+                    Problematic:
+                  </span>
+                  <span className="text-sm text-red-600 font-bold ml-2">
+                    {problematicCharCount}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                <button
+                  onClick={loadExampleText}
+                  className="px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border-0 cursor-pointer bg-gray-600 text-white hover:bg-gray-700 shadow-lg hover:shadow-xl active:scale-95"
+                >
+                  Sample Text
+                </button>
+                <button
+                  onClick={replaceProblematicChars}
+                  disabled={problematicCharCount === 0}
+                  className="px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border-0 cursor-pointer bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed shadow-lg hover:shadow-xl active:scale-95"
+                >
+                  Replace
+                </button>
+                <button
+                  onClick={copyToClipboard}
+                  disabled={text.length === 0 || isCopied}
+                  className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border-0 cursor-pointer shadow-lg hover:shadow-xl active:scale-95 ${
+                    isCopied
+                      ? 'bg-green-600 text-white'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  } disabled:bg-gray-400 disabled:cursor-not-allowed`}
+                >
+                  {isCopied ? 'Copied!' : 'Copy to Clipboard'}
+                </button>
+              </div>
+            </div>
+
+            {/* Input Section */}
+            <div className="mb-8">
+              <label className="block text-gray-700 text-lg font-semibold mb-3">
+                Input Text:
+              </label>
+              <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Paste text here or click 'Sample Text' to see problematic characters..."
+                className="w-full min-h-[200px] p-6 border-2 border-gray-300 rounded-xl text-sm leading-6 resize-y transition-all duration-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 shadow-lg focus:shadow-xl bg-white"
+              />
+            </div>
+
+            {/* Output Section */}
+            <div>
+              <label className="block text-gray-700 text-lg font-semibold mb-3">
+                Highlighted Output:
+              </label>
+              <div className="bg-white border-2 border-gray-200 rounded-xl shadow-lg overflow-hidden">
+                <div
+                  className="p-6 bg-gradient-to-br from-gray-50 to-white text-sm leading-6 whitespace-pre-wrap break-all min-h-[200px]"
+                  dangerouslySetInnerHTML={{ __html: highlightedText }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-
-        <div className="flex gap-3">
-          <button
-            onClick={loadExampleText}
-            className="px-4 py-2 rounded-md font-medium text-sm transition-all border-0 cursor-pointer bg-gray-600 text-white hover:bg-gray-700"
-          >
-            Load Example
-          </button>
-          <button
-            onClick={replaceProblematicChars}
-            disabled={problematicCharCount === 0}
-            className="px-4 py-2 rounded-md font-medium text-sm transition-all border-0 cursor-pointer bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            Replace Problematic Characters
-          </button>
-          <button
-            onClick={copyToClipboard}
-            disabled={text.length === 0 || isCopied}
-            className={`px-4 py-2 rounded-md font-medium text-sm transition-all border-0 cursor-pointer ${
-              isCopied
-                ? 'bg-green-600 text-white'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
-            } disabled:bg-gray-400 disabled:cursor-not-allowed`}
-          >
-            {isCopied ? 'Copied to Clipboard!' : 'Copy to Clipboard'}
-          </button>
-        </div>
-      </div>
-
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Paste text here or click 'Load Example' to see problematic characters..."
-        className="w-full min-h-[200px] p-4 border-2 border-gray-300 rounded-lg text-sm leading-6 resize-y mb-6 transition-colors focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-      />
-
-      <div className="">
-        <h3 className="mb-3 text-gray-700 text-lg font-semibold">
-          Highlighted Output:
-        </h3>
-        <div
-          className="p-4 bg-gray-50 border-2 border-gray-200 rounded-lg text-sm leading-6 whitespace-pre-wrap break-all min-h-[200px]"
-          dangerouslySetInnerHTML={{ __html: highlightedText }}
-        />
       </div>
     </div>
   )
