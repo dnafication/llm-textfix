@@ -1,4 +1,4 @@
-export const SAMPLE_TEXT = `Here's an example of problematic LLM output:More actions
+export const SAMPLE_TEXT = `Here's an example of problematic LLM output
 
 “Hello world!” said the AI, using smart quotes.
 ‘Single quotes’ are also problematic.
