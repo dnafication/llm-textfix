@@ -1,7 +1,8 @@
 {
-  "name": "de-llm",
+  "name": "llm-textfix",
+  "description": "Sanitize LLM output by detecting and replacing 25+ problematic characters",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
